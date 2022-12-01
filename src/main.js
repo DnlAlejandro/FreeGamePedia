@@ -90,7 +90,7 @@ function createGames(newArray, containerSec, container) {
         imgGameCard.addEventListener('click', ()=>{
             idSpecificGame.push(id)
         });
-        imgGameCard.addEventListener('click', getCreateGameDetails)
+        imgGameCard.addEventListener('click', getCreateGameDetails);
     }
 
     
@@ -206,6 +206,7 @@ async function getCreatePlatformsPreview() {
 }
 
 async function getCreateGameDetails(){
+
     const id = idSpecificGame[0];
     let = tempArray = []
     const { data } = await api('game', {
@@ -214,24 +215,69 @@ async function getCreateGameDetails(){
         }
     });
 
-    let textTitle = document.createTextNode(data.title);
-    modalTitle.append(textTitle);
-    modalImage.setAttribute('src', data.thumbnail);
-    let textDescription = document.createTextNode(data.description);
-    modalDescription.append(textDescription)
-    let textGenre = document.createTextNode("Genre: "+ data.genre);
-    modalGenre.append(textGenre)
-    let textPlatform = document.createTextNode("Platform: "+ data.platform);
-    modalPlatform.append(textPlatform)
-    let textCompany= document.createTextNode("Company: "+ data.publisher);
-    modalCompany.append(textCompany)
-    let textDate= document.createTextNode("Date: "+ data.release_date);
-    modalDate.append(textDate)
-    let textRequirements= document.createTextNode(`Requirements: 
-    OS ${data.minimum_system_requirements.os} Processor ${data.minimum_system_requirements.processor} Memory ${data.minimum_system_requirements.memory} Graphics ${data.minimum_system_requirements.graphics} Storage ${data.minimum_system_requirements.storage}`);
-    modalRequirements.append(textRequirements)
+    const modalDialog = document.createElement('div');
+    modalDialog.classList.add('modal-dialog', 'modal-dialog-scrollable');
 
+    const modalContent= document.createElement('div');
+    modalContent.classList.add('modal-content');
+
+    const modalHeader= document.createElement('div');
+    modalHeader.classList.add('modal-header');
+
+    const h5 = document.createElement('h5')
+    h5.classList.add('modal-title')
+    let textTitle = document.createTextNode(data.title);
+    h5.appendChild(textTitle)
+
+    const buttonClose= document.createElement('button');
+    buttonClose.classList.add('btn-close')
+    buttonClose.setAttribute('type', 'button');
+    buttonClose.setAttribute('data-bs-dismiss', 'modal');
+    buttonClose.setAttribute('aria-label', 'Close');
+    buttonClose.setAttribute('data-bs-backdrop', 'true');
+
+    const modalBody= document.createElement('div');
+    modalBody.classList.add('modal-body');
+
+    const modalImage = document.createElement('img')
+    modalImage.setAttribute('src', data.thumbnail);
+
+    const description = document.createElement('p')
+    description.classList.add('text-modal')
+    let textDescription = document.createTextNode(data.description);
+    description.appendChild(textDescription)
+
+    const genre = document.createElement('p')
+    let textGenre = document.createTextNode("Genre: "+ data.genre);
+    genre.appendChild(textGenre)
+
+    const platform = document.createElement('p')
+    let textPlatform = document.createTextNode("Platform: "+ data.platform);
+    platform.appendChild(textPlatform)
+
+    const company = document.createElement('p')
+    let textCompany = document.createTextNode("Company: "+ data.publisher);
+    company.appendChild(textCompany)
+
+    const date = document.createElement('p')
+    let textDate = document.createTextNode("Date released: "+ data.release_date);
+    date.appendChild(textDate)
+
+    const requirements = document.createElement('p')
+    let textRequirements = document.createTextNode(`Requirements: 
+    OS ${data.minimum_system_requirements.os} Processor ${data.minimum_system_requirements.processor} Memory ${data.minimum_system_requirements.memory} Graphics ${data.minimum_system_requirements.graphics} Storage ${data.minimum_system_requirements.storage}`);
+    requirements.appendChild(textRequirements);
+
+    modalId.append(modalDialog);
+    modalDialog.append(modalContent);
+    modalContent.append(modalHeader);
+    modalContent.append(modalBody);
+    modalHeader.append(h5, buttonClose);
+    modalBody.append(modalImage, description, platform, company, date, requirements);
+    
     idSpecificGame = [];
+
+    
 }
 
 getNewReleasesPreview();
