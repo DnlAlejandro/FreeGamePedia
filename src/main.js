@@ -217,7 +217,6 @@ async function getCreateGameDetails(){
     });
 
     tempArray.push(data.title);
-
     modalTitle.innerHTML = data.title;
     modalImage.setAttribute('src', data.thumbnail);
     modalDescription.innerHTML = data.description;

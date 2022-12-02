@@ -1,4 +1,4 @@
-let idSpecificGame = [];
+var idSpecificGame = [];
 
 buttonSearch.addEventListener('click', () => {
     location.hash = '#search=' + inputSearch.value;
