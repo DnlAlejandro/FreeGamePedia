@@ -14,7 +14,8 @@ h2{
 }
 #section-last-releases, 
 #section-categories,
-#section-most-popular{
+#section-most-popular,
+#section-results{
     width: 90%;
 }
 .card-footer{

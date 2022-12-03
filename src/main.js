@@ -24,6 +24,7 @@ function likedGamesList() {
 
 //UTILS
 function createGames(newArray, containerSec, container) {
+
     for (let a = 0; a < newArray.length; a++) {
 
         const id = newArray[a][0]
@@ -58,12 +59,12 @@ function createGames(newArray, containerSec, container) {
         cardText.appendChild(textCard)
         cardText2.appendChild(textCard2)
 
-        const buttonFav= document.createElement('button');
+        const buttonFav = document.createElement('button');
         buttonFav.classList.add('btn', 'btn-secondary', 'fav-button')
         buttonFav.setAttribute('content', 'test content');
         buttonFav.textContent = 'Add to favorites 🤍';
         buttonFav.addEventListener('click', () => {
-            buttonFav.classList.toggle('movie-btn--liked');
+        buttonFav.classList.toggle('movie-btn--liked');
         })
 
         const containerFooter = document.createElement('div')
@@ -87,14 +88,14 @@ function createGames(newArray, containerSec, container) {
         containerFooter.appendChild(footerText);
 
         //CALL FUNCTION TO SEE GAME DETAILS
-        imgGameCard.addEventListener('click', ()=>{
+        imgGameCard.addEventListener('click', () => {
             idSpecificGame.push(id)
         });
 
         imgGameCard.addEventListener('click', getCreateGameDetails)
     }
 
-    
+
 }
 
 async function getNewReleasesPreview() {
@@ -109,12 +110,13 @@ async function getNewReleasesPreview() {
             id = data[i].id,
             title = data[i].title,
             description = data[i].short_description,
-            Company= data[i].platform,
+            Company = data[i].platform,
             dateRelease = data[i].release_date,
             image = data[i].thumbnail
         ]
         tempArray.push(games)
     }
+
     createGames(tempArray, newReleasedSection, newReleasedContainer)
 }
 
@@ -136,7 +138,7 @@ async function getCreatePopularsPreview() {
         ]
         tempArray.push(games)
     }
-    createGames(tempArray, popularSection, popularContainer )
+    createGames(tempArray, popularSection, popularContainer)
 }
 
 async function getCreateCategoriesPreview() {
@@ -165,15 +167,15 @@ async function getCreateCategoriesPreview() {
         itemList.classList.add("list-group-item", "list-group-item-secondary");
         let textItemList = document.createTextNode(`${genresSorted[a]}`);
         itemList.appendChild(textItemList);
-        
+
         categoriesSection.appendChild(categoriesContainer);
         categoriesContainer.appendChild(itemList);
-        
-        
+
+
     }
-    
-    
-    
+
+
+
 }
 
 async function getCreatePlatformsPreview() {
@@ -206,7 +208,7 @@ async function getCreatePlatformsPreview() {
     }
 }
 
-async function getCreateGameDetails(){
+async function getCreateGameDetails() {
     const id = idSpecificGame[0];
 
     let = tempArray = []
@@ -220,19 +222,76 @@ async function getCreateGameDetails(){
     modalTitle.innerHTML = data.title;
     modalImage.setAttribute('src', data.thumbnail);
     modalDescription.innerHTML = data.description;
-    modalGenre.innerHTML = "<b>Genre: </b>"+ data.genre;
-    modalPlatform.innerHTML = "<b>Platform: </b>"+ data.platform;
-    modalCompany.innerHTML = "<b>Company: </b>"+ data.publisher;
-    modalDate.innerHTML = "<b>Date Release: </b>"+ data.release_date;
-    modalRequirements.innerHTML = "<b>Requirements: </b>"+
-    "<b>OS: </b>" + data.minimum_system_requirements.os + "</br>" + " <b>Processor: </b>" + data.minimum_system_requirements.processor
-    + "</br>" +" <b> Memory: </b>" + data.minimum_system_requirements.memory + "</br>" +" <b>Graphics: </b>" + data.minimum_system_requirements.graphics + "</br>" +
-    " <b>Storage: </b>" + data.minimum_system_requirements.storage
+    modalGenre.innerHTML = "<b>Genre: </b>" + data.genre;
+    modalPlatform.innerHTML = "<b>Platform: </b>" + data.platform;
+    modalCompany.innerHTML = "<b>Company: </b>" + data.publisher;
+    modalDate.innerHTML = "<b>Date Release: </b>" + data.release_date;
+    modalRequirements.innerHTML = "<b>Requirements: </b>" +
+        "<b>OS: </b>" + data.minimum_system_requirements.os + "</br>" + " <b>Processor: </b>" + data.minimum_system_requirements.processor
+        + "</br>" + " <b> Memory: </b>" + data.minimum_system_requirements.memory + "</br>" + " <b>Graphics: </b>" + data.minimum_system_requirements.graphics + "</br>" +
+        " <b>Storage: </b>" + data.minimum_system_requirements.storage
 
     idSpecificGame = [];
 }
+
+async function getNameIdGames() {
+    const { data } = await api('games', {
+    });
+    for (let i = 0; i < data.length; i++) {
+        idAndNames[data[i].id] = data[i].title.toLowerCase();
+    }
+}
+
+async function getGameBySearch() {
+
+    let keys = Object.keys(idAndNames);
+    let names = Object.values(idAndNames);
+    let keyArray = [];
+    let tempArray = [];
+
+    for (let i = 0; i < names.length; i++) {
+        if (names[i].includes(inputSearch.value.toLowerCase())) {
+            keyArray.push(keys[i])
+        }
+    }
+
+    
+    for(const a of keyArray) {
+        const { data } = await api('game', {
+            params: {
+                'id': a
+            }
+        });
+        let games = [
+            id = data.id,
+            title = data.title,
+            description = data.short_description,
+            platform = data.platform,
+            dateRelease = data.release_date,
+            image = data.thumbnail
+        ]
+        tempArray.push(games)
+        
+    }
+    console.log(keyArray)
+    if(keyArray.length <1){
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = "No results"
+        wrapper.classList.add('alert', 'alert-danger');
+        wrapper.setAttribute('role', 'alert')
+        messageError.append(wrapper)
+    }else{
+        messageError.innerHTML = ""
+        createGames(tempArray, resultsSection, resultsContainer);
+    }
+
+    
+}
+
 
 getNewReleasesPreview();
 getCreateCategoriesPreview();
 getCreatePlatformsPreview();
 getCreatePopularsPreview();
+getNameIdGames();
+
