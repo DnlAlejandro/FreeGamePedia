@@ -13,8 +13,9 @@ const popularContainer = document.querySelector('#container-popular');
 const categoriesContainer = document.querySelector('#container-categories');
 const resultsContainer = document.querySelector('#container-results');
 const inputSearch = document.querySelector('#input-search');
-const buttonSearch = document.querySelector('#button-search');
 const modalId = document.querySelector('#modal-id');
+const buttonSearch = document.querySelector('#button-search');
+const buttonfilter = document.querySelector('#button-filter');
 const modalTitle = document.querySelector('#modal-title');
 const modalImage = document.querySelector('#modal-image');
 const modalDescription = document.querySelector('#modal-description');
@@ -30,3 +31,13 @@ const titlePlatforms= document.querySelector('#titlePlatforms');
 const titleFavorites= document.querySelector('#titleFavorites');
 const messageError= document.querySelector('#message-error');
 const resultsTitleContainer= document.querySelector('#results-title-container');
+const buttonHome= document.querySelector('#home-button');
+const buttonReleases= document.querySelector('#releases-button');
+const buttonPopulars= document.querySelector('#populars-button');
+const buttonCategories= document.querySelector('#categories-button');
+const dropPlatform = document.querySelector("#drop-platform")
+const dropCategory =document.querySelector("#drop-category")
+const dropSort =document.querySelector("#drop-sort")
+const dropContainer =document.querySelector("#drop-container")
+
+

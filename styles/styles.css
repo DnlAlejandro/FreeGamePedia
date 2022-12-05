@@ -12,11 +12,18 @@ main{
 h2{
     margin:20px 0;
 }
+
+li{
+    cursor: pointer;
+}
 #section-last-releases, 
-#section-categories,
 #section-most-popular,
 #section-results{
     width: 90%;
+}
+#section-categories{
+    width: 90%;
+    display: none;
 }
 .card-footer{
     display: flex;
@@ -59,4 +66,25 @@ h2{
 }
 .text-modal{
     text-align: justify;
+}
+#button-seeAll{
+
+    margin: 10px 0;
+
+}
+.drop{
+    max-height: 280px;
+    overflow-y: auto;
+
+}
+#container-drop{
+    display: flex;
+    width: 30%;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+}
+.drop li{
+    margin-left: 5px;
 }

@@ -26,25 +26,21 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarScroll">
                 <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./index.html">Home</a>
+                    <li class="nav-item" id="home-button">
+                        <a class="nav-link active" href="./index.html">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Last Releases</a>
+                    <li class="nav-item" id="releases-button">
+                        <a class="nav-link active">Last Releases</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Popular</a>
+                    <li class="nav-item" id="populars-button">
+                        <a class="nav-link active">Most Popular</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Platforms</a>
+                    <li class="nav-item" id="categories-button">
+                        <a class="nav-link active">Categories & Tags</a>
                     </li>
                 </ul>
                 <form class="d-flex" role="search">
-                    <input class="form-control me-2" placeholder="Search Game" aria-label="Search"
-                        id="input-search">
+                    <input class="form-control me-2" placeholder="Search Game" aria-label="Search" id="input-search">
                     <button class="btn btn-outline-success" type="button" id="button-search">🔍</button>
                 </form>
             </div>
@@ -52,30 +48,52 @@
     </nav>
     <div id="message-error"></div>
     <main id="main">
-        <div id="results-title-container"></div>
+        <div id="results-title-container" class="d-grid gap-2 d-md-block"></div>
+
         <h2 id="titleLast">Last Releases</h2>
         <section id="section-last-releases">
             <div class="row row-cols-1 row-cols-lg-4 g-4" id="container-last-releases">
             </div>
         </section>
+
         <h2 id="titlePopular">Most popular</h2>
         <section id="section-most-popular">
             <div class="row row-cols-1 row-cols-lg-4 g-4" id="container-popular"></div>
         </section>
-        <h2 id="titleCategories">Categories</h2>
-        <section id="section-categories">
-            <ul class="list-group list-group-horizontal-lg" id="container-categories"></ul>
-        </section>
-        <h2 id="titlePlatforms">Platforms</h2>
-        <section id="section-platforms">
-        </section>
-        <h2 id="titleFavorites">Favorites</h2>
+
+        <h2 id="titleFavorites">Your Favorites</h2>
         <section id="section-favorites">
         </section>
+
+        <section id="section-categories">
+            <h2>Find your game filtering by platform, category or tag</h2>
+            <h5>You must to select a category at least</h5>
+            <div id="container-drop">
+                <div>
+                    <select name="" id="drop-platform">
+                        <option disabled selected>Platform</option>
+                    </select>
+                </div>
+                <div>
+                    <select name="" id="drop-category">
+                        <option disabled selected>Category</option>
+                    </select>
+                </div>
+                <div>
+                    <select name="" id="drop-sort">
+                        <option disabled selected>Sort</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-secondary" id="button-filter">Filter 🔍</button>
+            </div>
+            <div class="row row-cols-1 row-cols-lg-4 g-4" id="container-categories"></div>
+        </section>
+
         <section id="section-results">
             <div class="row row-cols-1 row-cols-lg-4 g-4" id="container-results"></div>
         </section>
-        <div class="modal" tabindex="-1" role="dialog" id='modal-id'> 
+
+        <div class="modal" tabindex="-1" role="dialog" id='modal-id'>
             <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -100,8 +118,8 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./src/secret.js"></script>
-    <script src="./src/main.js"></script>
     <script src="./src/nodes.js"></script>
+    <script src="./src/main.js"></script>
     <script src="./src/navigator.js"></script>
 </body>
 
