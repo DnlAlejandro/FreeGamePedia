@@ -12,6 +12,7 @@ const newReleasedContainer = document.querySelector('#container-last-releases');
 const popularContainer = document.querySelector('#container-popular');
 const categoriesContainer = document.querySelector('#container-categories');
 const resultsContainer = document.querySelector('#container-results');
+const favoritesContainer = document.querySelector('#container-favorites');
 const inputSearch = document.querySelector('#input-search');
 const modalId = document.querySelector('#modal-id');
 const buttonSearch = document.querySelector('#button-search');

@@ -9,32 +9,84 @@ const api = axios.create({
 	},
 });
 
-function likedGamesList() {
-	const item = JSON.parse(localStorage.getItem("liked_games"));
-	let games;
+function arrayRemove(arr, value) {
+	return arr.filter(function (ele) {
+		return ele != value;
+	});
+}
 
-	if (item) {
-		games = item;
+async function likedGamesList() {
+	let arrayIds = [];
+
+	const idsLiked = localStorage.getItem("liked_games");
+	if (idsLiked !== null) {
+		arrayIds = idsLiked.split(",");
+		arrayIds.pop();
 	} else {
-		games = {};
+		console.log("no hay lvl");
 	}
-	return games;
+	let tempArray = [];
+
+	if (idsLiked !== null) {
+		for (const a of arrayIds) {
+			const { data } = await api("game", {
+				params: {
+					id: a,
+				},
+			});
+			let games = [
+				(id = data.id),
+				(title = data.title),
+				(description = data.short_description),
+				(platform = data.platform),
+				(dateRelease = data.release_date),
+				(image = data.thumbnail),
+				(genre = data.genre),
+			];
+			tempArray.push(games);
+		}
+		createGames(tempArray, favoritesSection, favoritesContainer, false, true);
+	}
+	return arrayIds;
+}
+
+function likeGame() {
+	favoritesContainer.innerHTML = "";
+	const likedGamesVar = createGames();
+	localStorage.setItem("liked_games", likedGamesVar);
+	likedGamesList();
+	return likedGamesVar;
+}
+
+function unlikeGame() {
+	favoritesContainer.innerHTML = "";
+	const likedGamesVar = createGames();
+	localStorage.setItem("liked_games", likedGamesVar);
+	likedGamesList();
 }
 
 //UTILS
-function createGames(newArray, containerSec, container, noDelete = false) {
-	for (let a = 0; a < newArray.length; a++) {
-		const id = newArray[a][0];
-		
-		if(!noDelete){
+
+let likedGames = "";
+
+function createGames(
+	newArray,
+	containerSec,
+	container,
+	noDelete = false,
+	liked = false
+) {
+	//let listArrays = likedGamesList();
+	for (let a = 0; a < newArray?.length; a++) {
+		let id = newArray[a][0];
+		if (!noDelete) {
 			containerSec.innerHTML = "";
 		}
-		
 		const col = document.createElement("div");
 		col.classList.add("col");
 
 		const card = document.createElement("div");
-		card.classList.add("card", "h-100");
+		card.classList.add("card");
 
 		const imgGameCard = document.createElement("img");
 		imgGameCard.classList.add("card-img-top");
@@ -54,18 +106,15 @@ function createGames(newArray, containerSec, container, noDelete = false) {
 		const cardText2 = document.createElement("p");
 		cardText.classList.add("card-text");
 		cardText2.classList.add("card-text2");
+		let replaceCharacter = newArray[a][2].replaceAll(",", ".");
+		const index = newArray[a].indexOf(newArray[a][2]);
+		if (index !== -1) {
+			newArray[a][2] = replaceCharacter;
+		}
 		let textCard = document.createTextNode(`${newArray[a][2]}`);
-		let textCard2 = document.createTextNode(`Platform: ${newArray[a][3]}`);
+		let textCard2 = document.createTextNode(`Genre: ${newArray[a][6]}`);
 		cardText.appendChild(textCard);
 		cardText2.appendChild(textCard2);
-
-		const buttonFav = document.createElement("button");
-		buttonFav.classList.add("btn", "btn-secondary", "fav-button");
-		buttonFav.setAttribute("content", "test content");
-		buttonFav.textContent = "Add to favorites 🤍";
-		buttonFav.addEventListener("click", () => {
-			buttonFav.classList.toggle("movie-btn--liked");
-		});
 
 		const containerFooter = document.createElement("div");
 		containerFooter.classList.add("card-footer");
@@ -75,6 +124,41 @@ function createGames(newArray, containerSec, container, noDelete = false) {
 		let textFooter = document.createTextNode(`Date release: ${newArray[a][4]}`);
 		footerText.appendChild(textFooter);
 
+		const buttonFav = document.createElement("button");
+		buttonFav.classList.add("btn", "btn-secondary", "fav-btn");
+
+		let isNull = localStorage.getItem("liked_games") === null;
+		let arrayIds = localStorage.getItem("liked_games");
+
+		if (isNull) {
+			let arrayIds2 = [];
+		} else {
+			let arrayIds2 = arrayIds.split(",");
+		
+			let idConvert = id.toString();
+
+		liked || arrayIds2.includes(idConvert)
+			? buttonFav.classList.add("btn", "btn-secondary", "fav-btn--liked")
+			: buttonFav.classList.add("btn", "btn-secondary", "fav-btn");
+		}
+		buttonFav.addEventListener("click", () => {
+			if (buttonFav.classList.contains("fav-btn--liked")) {
+				buttonFav.classList.remove("fav-btn--liked");
+				let convertArray = likedGames.split(",");
+				let removeItem = arrayRemove(convertArray, newArray[a][0]);
+				const finalString = removeItem.toString();
+				likedGames = finalString;
+				console.log(newArray[a][0]);
+				likeGame();
+
+			} else {
+				buttonFav.classList.add("fav-btn--liked");
+				likedGames += newArray[a][0] + ",";
+				likeGame();
+				console.log(likedGames)
+	
+			}
+		});
 		containerSec.appendChild(container);
 		container.appendChild(col);
 		col.appendChild(card);
@@ -91,12 +175,17 @@ function createGames(newArray, containerSec, container, noDelete = false) {
 		imgGameCard.addEventListener("click", () => {
 			idSpecificGame.push(id);
 		});
-
 		imgGameCard.addEventListener("click", getCreateGameDetails);
 	}
+
+		
+
+	return likedGames;
 }
 
 async function getNewReleasesPreview() {
+
+	newReleasedSection.innerHTML = ""
 	let tempArray = [];
 	const { data } = await api("games", {
 		params: {
@@ -108,12 +197,15 @@ async function getNewReleasesPreview() {
 			(id = data[i].id),
 			(title = data[i].title),
 			(description = data[i].short_description),
-			(Company = data[i].platform),
+			(company = data[i].platform),
 			(dateRelease = data[i].release_date),
 			(image = data[i].thumbnail),
+			(genre = data[i].genre),
 		];
 		tempArray.push(games);
+		//console.log(tempArray)
 	}
+
 
 	createGames(tempArray, newReleasedSection, newReleasedContainer);
 }
@@ -133,78 +225,12 @@ async function getCreatePopularsPreview() {
 			(platform = data[i].platform),
 			(dateRelease = data[i].release_date),
 			(image = data[i].thumbnail),
+			(genre = data[i].genre),
 		];
 		tempArray.push(games);
 	}
 	createGames(tempArray, popularSection, popularContainer);
 }
-
-// async function getCreateCategoriesPreview() {
-// 	let genres = [];
-// 	const { data } = await api("games", {
-// 		params: {
-// 			"sort-by": "category",
-// 		},
-// 	});
-// 	for (let i = 0; i < data.length; i++) {
-// 		let genresArray = data[i].genre;
-// 		genres.push(genresArray);
-// 	}
-// 	const genresVerified = genres.reduce((acc, item) => {
-// 		if (!acc.includes(item)) {
-// 			acc.push(item);
-// 		}
-// 		return acc;
-// 	}, []);
-
-// 	const genresSorted = genresVerified.sort();
-
-// 	for (let a = 0; a < genresSorted.length; a++) {
-// 		if (genresSorted[a].startsWith(" ")) {
-// 		} else {
-// 			const itemList = document.createElement("li");
-// 			itemList.setAttribute('id',genresSorted[a])
-// 			itemList.classList.add(
-// 				"list-group-item",
-// 				"list-group-item-dark",
-// 				"button-category"
-// 			);
-// 			let textItemList = document.createTextNode(`${genresSorted[a]}`);
-// 			itemList.appendChild(textItemList);
-// 			categoriesContainer.appendChild(itemList);
-// 		}
-// 	}
-// }
-
-// async function getCreatePlatformsPreview() {
-// 	let platforms = [];
-// 	const { data } = await api("games", {
-// 		params: {
-// 			"sort-by": "platform",
-// 		},
-// 	});
-// 	for (let i = 0; i < data.length; i++) {
-// 		let platformsArray = data[i].platform;
-// 		platforms.push(platformsArray);
-// 	}
-// 	const platformsVerified = platforms.reduce((acc, item) => {
-// 		if (!acc.includes(item)) {
-// 			acc.push(item);
-// 		}
-// 		return acc;
-// 	}, []);
-
-// 	const platformsSorted = platformsVerified.sort();
-
-// 	for (let a = 0; a < platformsSorted.length; a++) {
-// 		const itemList = document.createElement("span");
-// 		itemList.classList.add("badge", "text-bg-dark");
-// 		let textItemList = document.createTextNode(`${platformsSorted[a]}`);
-// 		itemList.appendChild(textItemList);
-
-// 		platformsSection.appendChild(itemList);
-// 	}
-// }
 
 async function getCreateGameDetails() {
 	const id = idSpecificGame[0];
@@ -224,22 +250,23 @@ async function getCreateGameDetails() {
 	modalPlatform.innerHTML = "<b>Platform: </b>" + data.platform;
 	modalCompany.innerHTML = "<b>Company: </b>" + data.publisher;
 	modalDate.innerHTML = "<b>Date Release: </b>" + data.release_date;
-	modalRequirements.innerHTML =
-		"<b>Requirements: </b>" +
-		"<b>OS: </b>" +
-		data.minimum_system_requirements.os +
-		"</br>" +
-		" <b>Processor: </b>" +
-		data.minimum_system_requirements.processor +
-		"</br>" +
-		" <b> Memory: </b>" +
-		data.minimum_system_requirements.memory +
-		"</br>" +
-		" <b>Graphics: </b>" +
-		data.minimum_system_requirements.graphics +
-		"</br>" +
-		" <b>Storage: </b>" +
-		data.minimum_system_requirements.storage;
+	modalRequirements.innerHTML = !data.minimum_system_requirements
+		? ""
+		: "<b>Requirements: </b>" +
+		  "<b>OS: </b>" +
+		  data.minimum_system_requirements.os +
+		  "</br>" +
+		  " <b>Processor: </b>" +
+		  data.minimum_system_requirements.processor +
+		  "</br>" +
+		  " <b> Memory: </b>" +
+		  data.minimum_system_requirements.memory +
+		  "</br>" +
+		  " <b>Graphics: </b>" +
+		  data.minimum_system_requirements.graphics +
+		  "</br>" +
+		  " <b>Storage: </b>" +
+		  data.minimum_system_requirements.storage;
 
 	idSpecificGame = [];
 }
@@ -276,6 +303,7 @@ async function getGameBySearch() {
 			(platform = data.platform),
 			(dateRelease = data.release_date),
 			(image = data.thumbnail),
+			(genre = data.genre),
 		];
 		tempArray.push(games);
 	}
@@ -337,7 +365,6 @@ async function getPopulars() {
 }
 
 async function getFiltersCategories() {
-
 	dropPlatform.innerHTML = "";
 	dropCategory.innerHTML = "";
 	dropSort.innerHTML = "";
@@ -425,8 +452,7 @@ async function getFiltersCategories() {
 }
 
 async function getGamesByFilters() {
-
-	categoriesContainer.innerHTML = ""
+	categoriesContainer.innerHTML = "";
 
 	let platformValue;
 	let categoryValue;
@@ -461,10 +487,10 @@ async function getGamesByFilters() {
 			params,
 		});
 
-		if(data.length === undefined){
+		if (data.length === undefined) {
 			const h2NoResult = document.createElement("h2");
-			h2NoResult.innerHTML = "No results found"
-			categoriesContainer.append(h2NoResult)
+			h2NoResult.innerHTML = "No results found";
+			categoriesContainer.append(h2NoResult);
 		}
 
 		for (let i = 0; i < data.length; i++) {
@@ -477,32 +503,32 @@ async function getGamesByFilters() {
 				(image = data[i].thumbnail),
 			];
 			tempArray.push(games);
-			console.log(games)
+			console.log(games);
 		}
 		messageError.innerHTML = "";
 		console.log(tempArray);
-		createGames(tempArray, categoriesSection, categoriesContainer, noDelete = true);
+		createGames(
+			tempArray,
+			categoriesSection,
+			categoriesContainer,
+			(noDelete = true)
+		);
 		console.log(params);
-
-
 	} else {
+		const wrapper = document.createElement("div");
+		wrapper.innerHTML =
+			"You must to select a category (platform and sort by is not required)";
+		wrapper.classList.add("alert", "alert-danger");
+		wrapper.setAttribute("role", "alert");
+		messageError.append(wrapper);
 
-			const wrapper = document.createElement("div");
-			wrapper.innerHTML =
-				"You must to select a category (platform and sort by is not required)";
-			wrapper.classList.add("alert", "alert-danger");
-			wrapper.setAttribute("role", "alert");
-			messageError.append(wrapper);
-
-			setTimeout(() => {
-				messageError.innerHTML = "";
-			}, 1000);
-
+		setTimeout(() => {
+			messageError.innerHTML = "";
+		}, 1000);
 	}
 }
 
 getNewReleasesPreview();
-// getCreateCategoriesPreview();
-// getCreatePlatformsPreview();
 getCreatePopularsPreview();
 getNameIdGames();
+likedGamesList();

@@ -18,7 +18,8 @@ li{
 }
 #section-last-releases, 
 #section-most-popular,
-#section-results{
+#section-results,
+#section-favorites{
     width: 90%;
 }
 #section-categories{
@@ -36,10 +37,17 @@ li{
     justify-items: center;
     
 }
+.card-body h5{
+    height: 30px;
+}
 .card-body .card-text{
-    width: 100%;
-    height: 29%;
+    width: 80%;
+    height: 50px;
     overflow: hidden;
+}
+.card-body .card-text2{
+
+    margin-bottom: 10px;
 }
 .card-img-top{
     cursor: pointer;
@@ -49,9 +57,13 @@ li{
     gap: 5px;
     width: auto;
 }
-.fav-button{
-    display: flex;
+.fav-btn::before{
+    content: 'Add to favorites🤍';
 }
+.fav-btn--liked::before{
+    content: 'Remove to favorites💔';
+}
+
 .card-text2{
     font-weight: bold;
 }

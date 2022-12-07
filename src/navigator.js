@@ -2,6 +2,8 @@ var idSpecificGame = [];
 var idAndNames = {};
 var targetCategory = [];
 
+
+
 window.addEventListener("DOMContentLoaded", navigator, false);
 window.addEventListener("hashchange", navigator, true);
 
@@ -58,13 +60,14 @@ function searchPage() {
 	resultsTitleContainer.innerHTML = "";
 	const h2 = document.createElement("h2");
 	h2.innerHTML = "Results";
-	newReleasedSection.remove();
-	popularSection.remove();
-	favoritesSection.remove();
+	resultsSection.style.display = "flex";
+	newReleasedSection.style.display = "none";
+	popularSection.style.display = "none";
+	favoritesSection.style.display = "none";
 	categoriesSection.style.display = "none";
-	titleLast.remove();
-	titlePopular.remove();
-	titleFavorites.remove();
+	titleLast.style.display = "none";
+	titlePopular.style.display = "none";
+	titleFavorites.style.display = "none";
 	resultsTitleContainer.append(h2);
 
 	getGameBySearch();
@@ -118,6 +121,8 @@ function category(){
 	titleLast.style.display = "none";
 	titlePopular.style.display = "none";
 	titleFavorites.style.display = "none";
+	resultsSection.style.display = "none";
+	resultsTitleContainer.innerHTML = ""
 	
 	getFiltersCategories();
 
