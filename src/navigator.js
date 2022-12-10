@@ -32,11 +32,15 @@ function navigator() {
 		populars();
 	} else if (location.hash.startsWith("#category=")) {
 		category();
-	} 
+	}
+	else if (location.hash.startsWith("")) {
+		homePage();
+	}
 }
 
 function homePage() {
-	location.hash = "";
+	console.log("en homeee");
+	likedGamesList();
 }
 
 function searchEvent() {

@@ -16,18 +16,14 @@ function arrayRemove(arr, value) {
 }
 
 async function likedGamesList() {
-	let arrayIds = [];
-
+	likedGames = localStorage.getItem("liked_games");
 	const idsLiked = localStorage.getItem("liked_games");
-	if (idsLiked !== null) {
-		arrayIds = idsLiked.split(",");
-		arrayIds.pop();
-	} else {
-		console.log("no hay lvl");
-	}
+	let arrayIds = [];
 	let tempArray = [];
 
 	if (idsLiked !== null) {
+		arrayIds = idsLiked.split(",");
+		arrayIds.pop();
 		for (const a of arrayIds) {
 			const { data } = await api("game", {
 				params: {
@@ -46,23 +42,25 @@ async function likedGamesList() {
 			tempArray.push(games);
 		}
 		createGames(tempArray, favoritesSection, favoritesContainer, false, true);
+		if(location.hash.startsWith("#search=") ||
+		location.hash.startsWith("#releases=") ||
+		location.hash.startsWith("#popular=") ||
+		location.hash.startsWith("#category=")){
+			
+		}
+		else{
+			window.scroll(0, document.body.scrollHeight);
+		}
 	}
 	return arrayIds;
 }
 
 function likeGame() {
 	favoritesContainer.innerHTML = "";
-	const likedGamesVar = createGames();
-	localStorage.setItem("liked_games", likedGamesVar);
+	localStorage.setItem("liked_games", likedGames);
 	likedGamesList();
-	return likedGamesVar;
-}
-
-function unlikeGame() {
-	favoritesContainer.innerHTML = "";
-	const likedGamesVar = createGames();
-	localStorage.setItem("liked_games", likedGamesVar);
-	likedGamesList();
+	console.log(likedGames);
+	return likedGames;
 }
 
 //UTILS
@@ -134,12 +132,12 @@ function createGames(
 			let arrayIds2 = [];
 		} else {
 			let arrayIds2 = arrayIds.split(",");
-		
+
 			let idConvert = id.toString();
 
-		liked || arrayIds2.includes(idConvert)
-			? buttonFav.classList.add("btn", "btn-secondary", "fav-btn--liked")
-			: buttonFav.classList.add("btn", "btn-secondary", "fav-btn");
+			liked || arrayIds2.includes(idConvert)
+				? buttonFav.classList.add("btn", "btn-secondary", "fav-btn--liked")
+				: buttonFav.classList.add("btn", "btn-secondary", "fav-btn");
 		}
 		buttonFav.addEventListener("click", () => {
 			if (buttonFav.classList.contains("fav-btn--liked")) {
@@ -148,15 +146,24 @@ function createGames(
 				let removeItem = arrayRemove(convertArray, newArray[a][0]);
 				const finalString = removeItem.toString();
 				likedGames = finalString;
-				console.log(newArray[a][0]);
+				console.log(finalString);
 				likeGame();
-
+				if (
+					location.hash.startsWith("#search=") ||
+					location.hash.startsWith("#releases=") ||
+					location.hash.startsWith("#popular=") ||
+					location.hash.startsWith("#category=")
+				) {
+					
+				}else{
+					getNewReleasesPreview();
+					getCreatePopularsPreview();
+				}
 			} else {
 				buttonFav.classList.add("fav-btn--liked");
 				likedGames += newArray[a][0] + ",";
 				likeGame();
-				console.log(likedGames)
-	
+				console.log(likedGames);
 			}
 		});
 		containerSec.appendChild(container);
@@ -178,14 +185,12 @@ function createGames(
 		imgGameCard.addEventListener("click", getCreateGameDetails);
 	}
 
-		
-
 	return likedGames;
 }
 
 async function getNewReleasesPreview() {
-
-	newReleasedSection.innerHTML = ""
+	newReleasedSection.innerHTML = "";
+	newReleasedContainer.innerHTML = "";
 	let tempArray = [];
 	const { data } = await api("games", {
 		params: {
@@ -206,11 +211,11 @@ async function getNewReleasesPreview() {
 		//console.log(tempArray)
 	}
 
-
 	createGames(tempArray, newReleasedSection, newReleasedContainer);
 }
 
 async function getCreatePopularsPreview() {
+	popularContainer.innerHTML = "";
 	let tempArray = [];
 	const { data } = await api("games", {
 		params: {
@@ -335,6 +340,7 @@ async function getNewReleases() {
 			(Company = data[i].platform),
 			(dateRelease = data[i].release_date),
 			(image = data[i].thumbnail),
+			(genre = data[i].genre),
 		];
 		tempArray.push(games);
 	}
@@ -357,6 +363,7 @@ async function getPopulars() {
 			(Company = data[i].platform),
 			(dateRelease = data[i].release_date),
 			(image = data[i].thumbnail),
+			(genre = data[i].genre),
 		];
 		tempArray.push(games);
 	}
@@ -531,4 +538,3 @@ async function getGamesByFilters() {
 getNewReleasesPreview();
 getCreatePopularsPreview();
 getNameIdGames();
-likedGamesList();
