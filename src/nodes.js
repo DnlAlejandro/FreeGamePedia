@@ -40,5 +40,6 @@ const dropPlatform = document.querySelector("#drop-platform")
 const dropCategory =document.querySelector("#drop-category")
 const dropSort =document.querySelector("#drop-sort")
 const dropContainer =document.querySelector("#drop-container")
+const navPagination =document.querySelector("#nav-pagination")
 
 

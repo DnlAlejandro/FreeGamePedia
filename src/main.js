@@ -8,12 +8,23 @@ const api = axios.create({
 		"X-RapidAPI-Host": "free-to-play-games-database.p.rapidapi.com",
 	},
 });
-
+//UTILS
 function arrayRemove(arr, value) {
 	return arr.filter(function (ele) {
 		return ele != value;
 	});
 }
+
+const lazyLoader = new IntersectionObserver((entries) => {
+	entries.forEach((entry) => {
+		if (entry.isIntersecting) {
+			const url = entry.target.getAttribute("data-img");
+			entry.target.setAttribute("src", url);
+		}
+	});
+});
+
+//FUNCTIONS
 
 async function likedGamesList() {
 	likedGames = localStorage.getItem("liked_games");
@@ -42,13 +53,13 @@ async function likedGamesList() {
 			tempArray.push(games);
 		}
 		createGames(tempArray, favoritesSection, favoritesContainer, false, true);
-		if(location.hash.startsWith("#search=") ||
-		location.hash.startsWith("#releases=") ||
-		location.hash.startsWith("#popular=") ||
-		location.hash.startsWith("#category=")){
-			
-		}
-		else{
+		if (
+			location.hash.startsWith("#search=") ||
+			location.hash.startsWith("#releases=") ||
+			location.hash.startsWith("#popular=") ||
+			location.hash.startsWith("#category=")
+		) {
+		} else {
 			window.scroll(0, document.body.scrollHeight);
 		}
 	}
@@ -63,7 +74,7 @@ function likeGame() {
 	return likedGames;
 }
 
-//UTILS
+//FUNCTIONS
 
 let likedGames = "";
 
@@ -72,7 +83,8 @@ function createGames(
 	containerSec,
 	container,
 	noDelete = false,
-	liked = false
+	liked = false,
+	lazyLoad = false
 ) {
 	//let listArrays = likedGamesList();
 	for (let a = 0; a < newArray?.length; a++) {
@@ -88,10 +100,12 @@ function createGames(
 
 		const imgGameCard = document.createElement("img");
 		imgGameCard.classList.add("card-img-top");
-		imgGameCard.setAttribute("src", newArray[a][5]);
+		imgGameCard.setAttribute("data-img", newArray[a][5]);
 		imgGameCard.setAttribute("title", "Click to see all details");
 		imgGameCard.setAttribute("data-bs-toggle", "modal");
 		imgGameCard.setAttribute("data-bs-target", "#modal-id");
+
+		lazyLoader.observe(imgGameCard);
 
 		const cardBody = document.createElement("div");
 		cardBody.classList.add("card-body");
@@ -104,7 +118,8 @@ function createGames(
 		const cardText2 = document.createElement("p");
 		cardText.classList.add("card-text");
 		cardText2.classList.add("card-text2");
-		let replaceCharacter = newArray[a][2].replaceAll(",", ".");
+		let replaceCharacter = newArray[a][2].replace(/,/g, ".");
+		console.log(typeof(replaceCharacter))
 		const index = newArray[a].indexOf(newArray[a][2]);
 		if (index !== -1) {
 			newArray[a][2] = replaceCharacter;
@@ -154,10 +169,10 @@ function createGames(
 					location.hash.startsWith("#popular=") ||
 					location.hash.startsWith("#category=")
 				) {
-					
-				}else{
+				} else {
 					getNewReleasesPreview();
 					getCreatePopularsPreview();
+					window.scroll(0, document.body.scrollHeight);
 				}
 			} else {
 				buttonFav.classList.add("fav-btn--liked");
@@ -166,6 +181,7 @@ function createGames(
 				console.log(likedGames);
 			}
 		});
+
 		containerSec.appendChild(container);
 		container.appendChild(col);
 		col.appendChild(card);
@@ -258,20 +274,20 @@ async function getCreateGameDetails() {
 	modalRequirements.innerHTML = !data.minimum_system_requirements
 		? ""
 		: "<b>Requirements: </b>" +
-		  "<b>OS: </b>" +
-		  data.minimum_system_requirements.os +
-		  "</br>" +
-		  " <b>Processor: </b>" +
-		  data.minimum_system_requirements.processor +
-		  "</br>" +
-		  " <b> Memory: </b>" +
-		  data.minimum_system_requirements.memory +
-		  "</br>" +
-		  " <b>Graphics: </b>" +
-		  data.minimum_system_requirements.graphics +
-		  "</br>" +
-		  " <b>Storage: </b>" +
-		  data.minimum_system_requirements.storage;
+		"<b>OS: </b>" +
+		data.minimum_system_requirements.os +
+		"</br>" +
+		" <b>Processor: </b>" +
+		data.minimum_system_requirements.processor +
+		"</br>" +
+		" <b> Memory: </b>" +
+		data.minimum_system_requirements.memory +
+		"</br>" +
+		" <b>Graphics: </b>" +
+		data.minimum_system_requirements.graphics +
+		"</br>" +
+		" <b>Storage: </b>" +
+		data.minimum_system_requirements.storage;
 
 	idSpecificGame = [];
 }
@@ -288,6 +304,8 @@ async function getGameBySearch() {
 	let names = Object.values(idAndNames);
 	let keyArray = [];
 	let tempArray = [];
+
+	createLoader(resultsSection);
 
 	for (let i = 0; i < names.length; i++) {
 		if (names[i].includes(inputSearch.value.toLowerCase())) {
@@ -321,7 +339,15 @@ async function getGameBySearch() {
 		messageError.append(wrapper);
 	} else {
 		messageError.innerHTML = "";
-		createGames(tempArray, resultsSection, resultsContainer);
+
+		createGames(
+			tempArray,
+			resultsSection,
+			resultsContainer,
+			false,
+			false,
+			true
+		);
 	}
 }
 
@@ -332,7 +358,7 @@ async function getNewReleases() {
 			"sort-by": "release-date",
 		},
 	});
-	for (let i = 0; i < 12; i++) {
+	for (let i = 0; i < data.length; i++) {
 		let games = [
 			(id = data[i].id),
 			(title = data[i].title),
@@ -345,7 +371,14 @@ async function getNewReleases() {
 		tempArray.push(games);
 	}
 
-	createGames(tempArray, newReleasedSection, newReleasedContainer);
+	createGames(
+		tempArray,
+		newReleasedSection,
+		newReleasedContainer,
+		false,
+		false,
+		true
+	);
 }
 
 async function getPopulars() {
@@ -355,7 +388,7 @@ async function getPopulars() {
 			"sort-by": "popularity",
 		},
 	});
-	for (let i = 0; i < 12; i++) {
+	for (let i = 0; i < data.length; i++) {
 		let games = [
 			(id = data[i].id),
 			(title = data[i].title),
@@ -368,7 +401,7 @@ async function getPopulars() {
 		tempArray.push(games);
 	}
 
-	createGames(tempArray, popularSection, popularContainer);
+	createGames(tempArray, popularSection, popularContainer, false, false, true);
 }
 
 async function getFiltersCategories() {
@@ -465,6 +498,7 @@ async function getGamesByFilters() {
 	let categoryValue;
 	let sortValue;
 	let tempArray = [];
+	let dataLength;
 
 	let params = {};
 
@@ -494,12 +528,13 @@ async function getGamesByFilters() {
 			params,
 		});
 
+		dataLength = data.length;
+
 		if (data.length === undefined) {
 			const h2NoResult = document.createElement("h2");
 			h2NoResult.innerHTML = "No results found";
 			categoriesContainer.append(h2NoResult);
 		}
-
 		for (let i = 0; i < data.length; i++) {
 			let games = [
 				(id = data[i].id),
@@ -508,17 +543,20 @@ async function getGamesByFilters() {
 				(platform = data[i].platform),
 				(dateRelease = data[i].release_date),
 				(image = data[i].thumbnail),
+				(genre = data[i].genre),
 			];
 			tempArray.push(games);
-			console.log(games);
 		}
 		messageError.innerHTML = "";
 		console.log(tempArray);
+
 		createGames(
 			tempArray,
 			categoriesSection,
 			categoriesContainer,
-			(noDelete = true)
+			(noDelete = true),
+			false,
+			true
 		);
 		console.log(params);
 	} else {
@@ -533,8 +571,40 @@ async function getGamesByFilters() {
 			messageError.innerHTML = "";
 		}, 1000);
 	}
+	return dataLength;
+}
+
+function createLoader(section) {
+	const divLoaderContainer = document.createElement("div");
+	divLoaderContainer.classList.add("text-center");
+
+	const divLoader = document.createElement("div");
+	divLoader.classList.add("spinner-grow", "text-secondary");
+	divLoader.setAttribute("role", "status");
+	const spanLoader = document.createElement("span");
+	spanLoader.classList.add("visually-hidden");
+
+	const divLoader2 = document.createElement("div");
+	divLoader2.classList.add("spinner-grow", "text-secondary");
+	divLoader2.setAttribute("role", "status");
+	const spanLoader2 = document.createElement("span");
+	spanLoader2.classList.add("visually-hidden");
+
+	const divLoader3 = document.createElement("div");
+	divLoader3.classList.add("spinner-grow", "text-secondary");
+	divLoader3.setAttribute("role", "status");
+	const spanLoader3 = document.createElement("span");
+	spanLoader3.classList.add("visually-hidden");
+
+	section.append(divLoaderContainer);
+	divLoaderContainer.append(divLoader, divLoader2, divLoader3);
+	divLoader.append(spanLoader);
+	divLoader2.append(spanLoader2);
+	divLoader3.append(spanLoader3);
+	console.log("cargandaaaaaaaaa");
 }
 
 getNewReleasesPreview();
 getCreatePopularsPreview();
+
 getNameIdGames();

@@ -131,7 +131,4 @@ function category(){
 	getFiltersCategories();
 
 	buttonfilter.addEventListener("click", getGamesByFilters)
-
-
-	
 }

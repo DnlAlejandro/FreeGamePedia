@@ -1,95 +1,114 @@
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
-main{
+
+main {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
 }
-h2{
-    margin:20px 0;
+
+h2 {
+    margin: 20px 0;
 }
 
-li{
+li {
     cursor: pointer;
 }
-#section-last-releases, 
+
+#section-last-releases,
 #section-most-popular,
 #section-results,
-#section-favorites{
+#section-favorites {
     width: 90%;
 }
-#section-categories{
+
+#section-results {
+    justify-content: center;
+}
+
+#section-categories {
     width: 90%;
     display: none;
 }
-.card-footer{
+
+.card-footer {
     display: flex;
     justify-content: center;
 }
-.card-body{
+
+.card-body {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-items: center;
-    
 }
-.card-body h5{
-    height: 30px;
+
+.card-body h5 {
+    height: 50px;
+    overflow: hidden;
 }
-.card-body .card-text{
+
+.card-body .card-text {
     width: 80%;
     height: 50px;
     overflow: hidden;
 }
-.card-body .card-text2{
 
+.card-body .card-text2 {
     margin-bottom: 10px;
 }
-.card-img-top{
+
+.card-img-top {
     cursor: pointer;
 }
-#section-platforms{
+
+#section-platforms {
     display: flex;
     gap: 5px;
     width: auto;
 }
-.fav-btn::before{
-    content: 'Add to favorites🤍';
-}
-.fav-btn--liked::before{
-    content: 'Remove to favorites💔';
+
+.fav-btn::before {
+    content: "Add to favorites🤍";
 }
 
-.card-text2{
+.fav-btn--liked::before {
+    content: "Remove to favorites💔";
+}
+
+.card-text2 {
     font-weight: bold;
 }
+
 .modal-body {
     display: flex;
     flex-direction: column;
 }
-.modal-body img{
+
+.modal-body img {
     margin-bottom: 10px;
     display: flex;
     justify-self: center;
 }
-.text-modal{
+
+.text-modal {
     text-align: justify;
 }
-#button-seeAll{
 
+#button-seeAll {
     margin: 10px 0;
-
 }
-.drop{
+
+.drop {
     max-height: 280px;
     overflow-y: auto;
-
 }
-#container-drop{
+
+#container-drop {
     display: flex;
     width: 30%;
     justify-content: space-between;
@@ -97,6 +116,30 @@ li{
     margin-bottom: 20px;
 
 }
-.drop li{
+#container-drop div{
+    
+    margin:0 10px 10px 0;
+
+}
+
+.drop li {
     margin-left: 5px;
+}
+
+.nav-pagination {
+    margin-top: 20px;
+}
+
+.text-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 600px) {
+    #container-drop {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
 }
