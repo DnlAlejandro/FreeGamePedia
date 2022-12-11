@@ -27,7 +27,11 @@ const lazyLoader = new IntersectionObserver((entries) => {
 //FUNCTIONS
 
 async function likedGamesList() {
-	likedGames = localStorage.getItem("liked_games");
+	if(localStorage.getItem("liked_games") === null){
+		likedGames = "";
+	}else{
+		likedGames = localStorage.getItem("liked_games");
+	}
 	const idsLiked = localStorage.getItem("liked_games");
 	let arrayIds = [];
 	let tempArray = [];
@@ -84,9 +88,8 @@ function createGames(
 	container,
 	noDelete = false,
 	liked = false,
-	lazyLoad = false
-) {
-	//let listArrays = likedGamesList();
+	lazyLoad = false) {
+
 	for (let a = 0; a < newArray?.length; a++) {
 		let id = newArray[a][0];
 		if (!noDelete) {
@@ -119,7 +122,6 @@ function createGames(
 		cardText.classList.add("card-text");
 		cardText2.classList.add("card-text2");
 		let replaceCharacter = newArray[a][2].replace(/,/g, ".");
-		console.log(typeof(replaceCharacter))
 		const index = newArray[a].indexOf(newArray[a][2]);
 		if (index !== -1) {
 			newArray[a][2] = replaceCharacter;
@@ -305,8 +307,6 @@ async function getGameBySearch() {
 	let keyArray = [];
 	let tempArray = [];
 
-	createLoader(resultsSection);
-
 	for (let i = 0; i < names.length; i++) {
 		if (names[i].includes(inputSearch.value.toLowerCase())) {
 			keyArray.push(keys[i]);
@@ -332,6 +332,7 @@ async function getGameBySearch() {
 	}
 	console.log(keyArray);
 	if (keyArray.length < 1) {
+		resultsSection.innerHTML= ""
 		const wrapper = document.createElement("div");
 		wrapper.innerHTML = "No results";
 		wrapper.classList.add("alert", "alert-danger");
@@ -339,7 +340,7 @@ async function getGameBySearch() {
 		messageError.append(wrapper);
 	} else {
 		messageError.innerHTML = "";
-
+		resultsSection.innerHTML= ""
 		createGames(
 			tempArray,
 			resultsSection,
@@ -575,6 +576,7 @@ async function getGamesByFilters() {
 }
 
 function createLoader(section) {
+
 	const divLoaderContainer = document.createElement("div");
 	divLoaderContainer.classList.add("text-center");
 
@@ -601,10 +603,9 @@ function createLoader(section) {
 	divLoader.append(spanLoader);
 	divLoader2.append(spanLoader2);
 	divLoader3.append(spanLoader3);
-	console.log("cargandaaaaaaaaa");
+	console.log('pasando')
 }
 
 getNewReleasesPreview();
 getCreatePopularsPreview();
-
 getNameIdGames();

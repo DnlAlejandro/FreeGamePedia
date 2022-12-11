@@ -39,7 +39,6 @@ function navigator() {
 }
 
 function homePage() {
-	console.log("en homeee");
 	likedGamesList();
 }
 
@@ -60,11 +59,11 @@ function searchEvent() {
 }
 
 function searchPage() {
+	resultsSection.style.display = "flex";
 	resultsContainer.innerHTML = "";
 	resultsTitleContainer.innerHTML = "";
 	const h2 = document.createElement("h2");
 	h2.innerHTML = "Results";
-	resultsSection.style.display = "flex";
 	newReleasedSection.style.display = "none";
 	popularSection.style.display = "none";
 	favoritesSection.style.display = "none";
@@ -73,7 +72,7 @@ function searchPage() {
 	titlePopular.style.display = "none";
 	titleFavorites.style.display = "none";
 	resultsTitleContainer.append(h2);
-
+	createLoader(resultsSection);
 	getGameBySearch();
 }
 

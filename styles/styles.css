@@ -136,6 +136,10 @@ li {
     justify-content: center;
 }
 
+#container-loading{
+    width: 	200px;
+    height: 200px;
+}
 @media (max-width: 600px) {
     #container-drop {
         flex-direction: column;
